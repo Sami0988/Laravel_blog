@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 
 
 Route::post('register', [AuthController::class, 'register']);
@@ -19,3 +20,12 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/posts/{id}', [PostController::class, 'update']);
     Route::delete('/posts/{id}', [PostController::class, 'destroy']);
 });
+
+//comment route 
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
+});
+
+Route::get('/posts/{post}/comments', [CommentController::class, 'show']);
+
