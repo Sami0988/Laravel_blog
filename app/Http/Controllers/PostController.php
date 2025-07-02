@@ -15,42 +15,56 @@ class PostController extends Controller
         $this->postRepo = $postRepo;
     }
 
+    // QUERIES (READ ONLY)
     public function index()
     {
-        return response()->json($this->postRepo->getAll());
+        // Optimized read: Select only needed fields
+        return response()->json(
+            $this->postRepo->getAll(['id', 'title', 'created_at'])
+        );
     }
 
     public function show($id)
     {
-        return response()->json($this->postRepo->getById($id));
+        // Read-specific logic (e.g., no sensitive fields)
+        return response()->json(
+            $this->postRepo->getById($id, ['id', 'title', 'content', 'created_at'])
+        );
     }
 
+ 
+    // COMMANDS (WRITE ONLY)
+ 
     public function store(Request $request)
     {
+        // Validation and command execution
         $data = $request->validate([
-            'title' => 'required|string',
+            'title' => 'required|string|max:255',
             'content' => 'required|string',
         ]);
 
         $data['user_id'] = auth('api')->id();
 
-        $post = $this->postRepo->create($data);
-        return response()->json($post, 201);
+        // Write operation 
+        $postId = $this->postRepo->create($data)->id;
+        return response()->json(['id' => $postId], 201);
     }
 
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'title' => 'sometimes|string',
+            'title' => 'sometimes|string|max:255',
             'content' => 'sometimes|string',
         ]);
 
-        $updated = $this->postRepo->update($id, $data);
-        return response()->json($updated);
+        // Write operation 
+        $this->postRepo->update($id, $data);
+        return response()->json(['message' => 'Post updated']);
     }
 
     public function destroy($id)
     {
+        // Write operation
         $this->postRepo->delete($id);
         return response()->json(['message' => 'Post deleted']);
     }
