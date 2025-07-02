@@ -37,6 +37,6 @@ Route::middleware('auth:api')->get('/my-posts', [PostController::class, 'myPosts
 
 
 //Admin Only 
-Route::middleware(['auth:sanctum', 'is_admin'])->group(function () {
+Route::middleware(['auth:api', 'useradmin'])->group(function () {
     Route::get('/admin/users', [UserController::class, 'index']);
 });
