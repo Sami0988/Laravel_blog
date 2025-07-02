@@ -80,6 +80,7 @@ class AuthController extends Controller
             'token' => $token
         ]);
     }
+    //Logout User
     public function logout(Request $request)
 {
     try {
