@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Middleware\IsAdmin;
+use App\Http\Controllers\Admin\UserController;
+
 
 
 Route::post('register', [AuthController::class, 'register']);
@@ -29,3 +32,11 @@ Route::middleware('auth:api')->group(function () {
 
 Route::get('/posts/{post}/comments', [CommentController::class, 'show']);
 
+//my-post route
+Route::middleware('auth:api')->get('/my-posts', [PostController::class, 'myPosts']);
+
+
+//Admin Only 
+Route::middleware(['auth:sanctum', 'is_admin'])->group(function () {
+    Route::get('/admin/users', [UserController::class, 'index']);
+});

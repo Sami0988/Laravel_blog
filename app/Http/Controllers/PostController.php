@@ -30,9 +30,24 @@ class PostController extends Controller
         return response()->json(
             $this->postRepo->getById($id, ['id', 'title', 'content', 'created_at'])
         );
-    }
+    }public function myPosts()
+{
+    $userId = auth('api')->id();
 
- 
+    $posts = \App\Models\Post::with([
+        'comments' => function ($query) {
+            $query->select('id', 'post_id', 'user_id', 'content', 'created_at');
+        },
+        'comments.user:id,name,email' // load user data for each comment
+    ])
+    ->where('user_id', $userId)
+    ->get(); // don't limit fields here or you'll break relationships
+
+    return response()->json($posts);
+}
+
+
+
     // COMMANDS (WRITE ONLY)
  
     public function store(Request $request)
