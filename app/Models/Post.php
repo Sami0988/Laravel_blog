@@ -9,14 +9,12 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+protected $fillable = [
     'title',
-    'content',
-    'user_id',
     'description',
-    'image',
-    'link',
-    'technologies',
+    
+    'author_name',  
+    'user_id',     
 ];
 
 
@@ -26,7 +24,5 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
-    protected $casts = [
-    'technologies' => 'array',
-];
+  
 }

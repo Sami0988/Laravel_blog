@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\Interfaces\PostRepositoryInterface;
 use Illuminate\Http\Request;
+use App\Models\Post;
 
 class PostController extends Controller
 {
@@ -38,10 +39,10 @@ class PostController extends Controller
         'comments' => function ($query) {
             $query->select('id', 'post_id', 'user_id', 'content', 'created_at');
         },
-        'comments.user:id,name,email' // load user data for each comment
+        'comments.user:id,name,email' 
     ])
     ->where('user_id', $userId)
-    ->get(); // don't limit fields here or you'll break relationships
+    ->get(); 
 
     return response()->json($posts);
 }
@@ -50,20 +51,26 @@ class PostController extends Controller
 
     // COMMANDS (WRITE ONLY)
  
-    public function store(Request $request)
-    {
-        // Validation and command execution
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+    ]);
 
-        $data['user_id'] = auth('api')->id();
+    $user = auth()->user();
 
-        // Write operation 
-        $postId = $this->postRepo->create($data)->id;
-        return response()->json(['id' => $postId], 201);
-    }
+    $post = Post::create([
+        'title' => $request->title,
+        'description' => $request->description,
+        'user_id' => $user->id,
+        'author_name' => $user->name,
+    ]);
+
+    return response()->json($post, 201);
+}
+
+
 
     public function update(Request $request, $id)
     {
