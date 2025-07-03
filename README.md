@@ -35,6 +35,6 @@ This is a REST API for a simple blog system built with **Laravel 12** and **PHP 
 1. Clone the repository:
 
    ```bash
-   git clone (https://github.com/Sami0988/Laravel_blog)
+   git clone https://github.com/Sami0988/Laravel_blog
    npm install
-   cd your-backend-folder
+   cd blog-api
